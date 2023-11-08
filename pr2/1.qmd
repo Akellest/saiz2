@@ -1,0 +1,136 @@
+---
+title: "Лабораторная работа №2"
+format:   
+  md:
+    output-file: README.md
+editor_options: 
+  chunk_output_type: inline
+---
+
+## Цель работы
+
+1.  Развить практические навыки использования языка программирования R для обработки данных
+2.  Закрепить знания базовых типов данных языка R
+3.  Развить пркатические навыки использования функций обработки данных пакета dplyr -- функции select(), filter(), mutate(), arrange(), group_by()
+
+## Исходные данные
+
+-   Windows 10
+-   RStudio
+
+## Ход работы
+
+```{r}
+library(dplyr)
+```
+
+### Сколько строк в датафрейме
+
+```{r}
+data(starwars)
+num_rows <- nrow(starwars)
+num_rows
+```
+
+### Сколько столбцов в датафрейме
+
+```{r}
+starwars %>% ncol()
+```
+
+### Примерный вид датафрейма
+
+```{r}
+starwars %>% glimpse()
+```
+
+### Сколько уникальных рас персонажей представлено
+
+```{r}
+unique_species <- starwars %>%
+  select(species) %>%
+  distinct()
+nrow(unique_species)
+```
+
+### Самый высокий персонаж
+
+```{r}
+tallest_character <- starwars %>%
+  filter(height == max(height, na.rm = TRUE))
+names_only <- tallest_character %>%
+  select(name)
+as.character(unlist(names_only))[1]
+```
+
+### Персонажи ниже 170
+
+```{r}
+name_height <- starwars %>%
+  filter(height < 170) %>%
+  select(name, height)
+
+print(name_height)
+
+```
+
+### ИМТ для всех персонажей
+
+```{r}
+starwars_with_bmi <- starwars %>%
+  mutate(BMI = mass / (height/100)^2)
+mass_height <- starwars_with_bmi %>%
+  select(name, mass, height)
+print(mass_height)
+```
+
+### 10 самых "вытянутых" персонажей
+
+```{r}
+stretched10 <- starwars %>%
+  mutate(stretchiness = mass / height) %>%
+  arrange(desc(stretchiness)) %>%
+  head(10)
+mass_height <- stretched10 %>%
+  select(name, mass, height)
+print(mass_height)
+```
+
+### Средний возраст персонажей каждой расы
+
+``` {r}
+grouped_data <- starwars %>%
+  group_by(species) %>%
+  summarize(mean_age = mean(birth_year, na.rm = TRUE)) %>%
+  filter(!is.nan(mean_age))
+
+grouped_data
+```
+
+### Найти самый распространенный цвет глаз персонажей
+
+```{r}
+most_common_eye_color <- starwars %>%
+  group_by(eye_color) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(1)
+print(most_common_eye_color)
+```
+
+### Средняя длина имени в каждой расе
+
+```{r}
+avg_name_length_by_species <- starwars %>%
+  group_by(species) %>%
+  summarise(mean_name_length = mean(nchar(name)))
+print(avg_name_length_by_species)
+```
+
+## Оценка результата
+
+Задание было выполнено, изучен пакет *dplyr*
+
+## Вывод
+
+Были развиты практические навыки использования языка программирования R для обработки данных
