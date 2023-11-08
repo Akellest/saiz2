@@ -100,7 +100,7 @@ cat("Персонажи ниже 170 см:\n")
     Персонажи ниже 170 см:
 
 ``` r
-name_height
+print(name_height)
 ```
 
     # A tibble: 23 × 2
@@ -129,7 +129,7 @@ cat("Персонажи с ИМТ:\n")
     Персонажи с ИМТ:
 
 ``` r
-mass_height
+print(mass_height)
 ```
 
     # A tibble: 87 × 3
@@ -160,7 +160,7 @@ cat("10 самых 'вытянутых' персонажей:\n")
     10 самых 'вытянутых' персонажей:
 
 ``` r
-mass_height
+print(mass_height)
 ```
 
     # A tibble: 10 × 3
@@ -197,7 +197,7 @@ cat("Самый распространенный цвет глаз:\n")
     Самый распространенный цвет глаз:
 
 ``` r
-most_common_eye_color
+print(most_common_eye_color)
 ```
 
     # A tibble: 1 × 2
@@ -215,7 +215,7 @@ cat("Средняя длина имени в каждой расе:\n")
     Средняя длина имени в каждой расе:
 
 ``` r
-avg_name_length_by_species
+print(avg_name_length_by_species)
 ```
 
     # A tibble: 38 × 2
