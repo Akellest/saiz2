@@ -18,7 +18,7 @@
     Programming
 4.  Проходим 4 первых урока
 
-### 1. Basic Building Blocks
+### Basic Building Blocks
 
 In its simplest form, R can be used as an interactive calculator. Type
 5 + 7 and press Enter
@@ -186,7 +186,7 @@ my_div
 
     [1] 3.478505 3.181981 2.146460
 
-### 1. Basic Building Blocks
+### Workspace and Files
 
 Determine which directory your R session is using as its current working
 directory using getwd().
@@ -237,13 +237,14 @@ dir()
     [17] "EA Games"                       "FormatFactory"                 
     [19] "IISExpress"                     "Larian Studios"                
     [21] "My Cheat Tables"                "My Games"                      
-    [23] "Need for Speed(TM) Payback"     "NFS SHIFT"                     
-    [25] "Project CARS"                   "README.md"                     
-    [27] "Rockstar Games"                 "Telltale Games"                
-    [29] "testdir"                        "The Mercury man"               
-    [31] "The Witcher 3"                  "Visual Studio 2022"            
-    [33] "Warm Lamp Games"                "WB Games"                      
-    [35] "wmd_symbol_cache"              
+    [23] "mytest2.R"                      "mytest3.R"                     
+    [25] "Need for Speed(TM) Payback"     "NFS SHIFT"                     
+    [27] "Project CARS"                   "README.md"                     
+    [29] "Rockstar Games"                 "Telltale Games"                
+    [31] "testdir"                        "testdir2"                      
+    [33] "The Mercury man"                "The Witcher 3"                 
+    [35] "Visual Studio 2022"             "Warm Lamp Games"               
+    [37] "WB Games"                       "wmd_symbol_cache"              
 
 As we go through this lesson, you should be examining the help page for
 each new function. Check out the help page for list.files with the
@@ -313,13 +314,15 @@ list.files()
     [17] "EA Games"                       "FormatFactory"                 
     [19] "IISExpress"                     "Larian Studios"                
     [21] "My Cheat Tables"                "My Games"                      
-    [23] "mytest.R"                       "Need for Speed(TM) Payback"    
-    [25] "NFS SHIFT"                      "Project CARS"                  
-    [27] "README.md"                      "Rockstar Games"                
-    [29] "Telltale Games"                 "testdir"                       
-    [31] "The Mercury man"                "The Witcher 3"                 
-    [33] "Visual Studio 2022"             "Warm Lamp Games"               
-    [35] "WB Games"                       "wmd_symbol_cache"              
+    [23] "mytest.R"                       "mytest2.R"                     
+    [25] "mytest3.R"                      "Need for Speed(TM) Payback"    
+    [27] "NFS SHIFT"                      "Project CARS"                  
+    [29] "README.md"                      "Rockstar Games"                
+    [31] "Telltale Games"                 "testdir"                       
+    [33] "testdir2"                       "The Mercury man"               
+    [35] "The Witcher 3"                  "Visual Studio 2022"            
+    [37] "Warm Lamp Games"                "WB Games"                      
+    [39] "wmd_symbol_cache"              
 
 Check to see if “mytest.R” exists in the working directory using the
 file.exists() function.
@@ -337,9 +340,9 @@ file.info("mytest.R")
 ```
 
              size isdir mode               mtime               ctime
-    mytest.R    0 FALSE  666 2023-11-08 14:02:57 2023-11-08 14:02:57
+    mytest.R    0 FALSE  666 2023-11-08 14:11:24 2023-11-08 14:11:24
                            atime exe
-    mytest.R 2023-11-08 14:02:57  no
+    mytest.R 2023-11-08 14:11:24  no
 
 Change the name of the file “mytest.R” to “mytest2.R” by using
 file.rename().
@@ -356,7 +359,7 @@ Make a copy of “mytest2.R” called “mytest3.R” using file.copy().
 file.copy("mytest2.R", "mytest3.R")
 ```
 
-    [1] TRUE
+    [1] FALSE
 
 Provide the relative path to the file “mytest3.R” by using file.path().
 
@@ -393,6 +396,9 @@ dir.create() and file.path().
 dir.create(file.path('testdir2', 'testdir3'), recursive = TRUE)
 ```
 
+    Warning in dir.create(file.path("testdir2", "testdir3"), recursive = TRUE):
+    'testdir2\testdir3' уже существует
+
 Go back to your original working directory using setwd(). (Recall that
 we created the variable old.dir with the full path for the orginal
 working directory at the start of these questions.)
@@ -400,3 +406,136 @@ working directory at the start of these questions.)
 ``` r
 setwd(old.dir)
 ```
+
+### Sequences of Numbers
+
+The simplest way to create a sequence of numbers in R is by using the
+`:` operator. Type 1:20 to see how it works.
+
+``` r
+1:20
+```
+
+     [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+
+That gave us every integer between (and including) 1 and 20. We could
+also use it to create a sequence of real numbers. For example, try
+pi:10.
+
+``` r
+pi:10
+```
+
+    [1] 3.141593 4.141593 5.141593 6.141593 7.141593 8.141593 9.141593
+
+What happens if we do 15:1? Give it a try to find out.
+
+``` r
+15:1
+```
+
+     [1] 15 14 13 12 11 10  9  8  7  6  5  4  3  2  1
+
+Pull up the documentation for `:` now.
+
+``` r
+?":"
+```
+
+Often, we’ll desire more control over a sequence we’re creating than
+what the `:` operator gives us. The seq() function serves this purpose.
+
+``` r
+seq(1, 20)
+```
+
+     [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20
+
+This gives us the same output as 1:20. However, let’s say that instead
+we want a vector of numbers ranging from 0 to 10, incremented by 0.5.
+seq(0, 10, by=0.5) does just that. Try it out.
+
+``` r
+seq(0, 10, by=0.5)
+```
+
+     [1]  0.0  0.5  1.0  1.5  2.0  2.5  3.0  3.5  4.0  4.5  5.0  5.5  6.0  6.5  7.0
+    [16]  7.5  8.0  8.5  9.0  9.5 10.0
+
+Or maybe we don’t care what the increment is and we just want a sequence
+of 30 numbers between 5 and 10. seq(5, 10, length=30) does the trick.
+Give it a shot now and store the result in a new variable called my_seq.
+
+``` r
+my_seq <- seq(5, 10, length=30)
+```
+
+To confirm that my_seq has length 30, we can use the length() function.
+Try it now.
+
+``` r
+length(my_seq)
+```
+
+    [1] 30
+
+There are several ways we could do this. One possibility is to combine
+the `:` operator and the length() function like this: 1:length(my_seq).
+Give that a try.
+
+``` r
+1:length(my_seq)
+```
+
+     [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+    [26] 26 27 28 29 30
+
+Another option is to use seq(along.with = my_seq). Give that a try
+
+``` r
+seq(along.with = my_seq)
+```
+
+     [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+    [26] 26 27 28 29 30
+
+However, as is the case with many common tasks, R has a separate
+built-in function for this purpose called seq_along(). Type
+seq_along(my_seq) to see it in action.
+
+``` r
+seq_along(my_seq)
+```
+
+     [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25
+    [26] 26 27 28 29 30
+
+If we’re interested in creating a vector that contains 40 zeros, we| can
+use rep(0, times = 40). Try it out.
+
+``` r
+rep(0, times=40)
+```
+
+     [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+    [39] 0 0
+
+If instead we want our vector to contain 10 repetitions of the vector
+(0, 1, 2), we can do rep(c(0, 1, 2), times = 10). Go ahead.
+
+``` r
+rep(c(0, 1, 2), times=10)
+```
+
+     [1] 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2 0 1 2
+
+Finally, let’s say that rather than repeating the vector (0, 1, 2) over
+and over again, we want our vector to contain 10 zeros, then 10 ones,
+then 10 twos. We can do this with the `each` argument. Try rep(c(0, 1,
+2), each = 10).
+
+``` r
+rep(c(0, 1, 2), each=10)
+```
+
+     [1] 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 2 2 2 2 2 2 2 2 2 2
