@@ -21,6 +21,112 @@ editor_options:
 ## Ход работы
 
 Устанавливаем пакеты *dplyr* и *nycflights13*
+```{r}
+library(dplyr)
+library(nycflights13)
+```
+
+
+Сколько встроенных в пакет nycflights13 датафреймов?
+```{r}
+frame <- data(package = "nycflights13")
+num_rows <- nrow(frame$results)
+print(num_rows)
+```
+Сколько строк в каждом датафрейме?
+```{r}
+dataframes <- list(
+  flights = flights,
+  weather = weather,
+  planes = planes,
+  airports = airports,
+  airlines = airlines
+                  )
+
+for (frame in names(dataframes)) {
+  cat(paste("Количество строк в", frame, ":", nrow(dataframes[[frame]])), "\n")}
+```
+Сколько столбцов в каждом датафрейме?
+```{r}
+for (frame in names(dataframes)) {
+  cat(paste("Количество столбцов в", frame, ":", ncol(dataframes[[frame]])), "\n")
+}
+```
+
+Как просмотреть примерный вид датафрейма?
+```{r}
+glimpse(flights)
+```
+Сколько компаний-перевозчиков (carrier) учитывают эти наборы данных (представлено в наборах данных)?
+```{r}
+num_carriers <- n_distinct(flights$carrier)
+print(num_carriers)
+```
+
+Сколько рейсов принял аэропорт John F Kennedy Intl в мае?
+```{r}
+may <- flights %>%
+  filter(month == 5, dest == "JFK")
+num_may <- nrow(may)
+print(num_may)
+```
+
+Какой самый северный аэропорт?
+```{r}
+northernmost_airport <- airports %>%
+  arrange(desc(lat)) %>% # Сортируем по убыванию широты
+  head(1) # Выбираем самый северный аэропорт
+northernmost_airport
+```
+
+Какой аэропорт самый высокогорный (находится выше всех над уровнем моря)?
+```{r}
+highest_airport <- airports %>%
+  arrange(desc(alt)) %>%
+  head(1)
+highest_airport
+```
+
+Какие бортовые номера у самых старых самолетов?
+```{r}
+old <- planes %>%
+  filter(year < 1970) %>%
+  arrange(year) %>%
+  distinct(tailnum)
+
+old
+```
+
+Какая средняя температура воздуха была в сентябре в аэропорту John F Kennedy Intl (в градусах Цельсия).
+```{r}
+temp <- weather %>%
+  filter(month == 9, origin == "JFK")
+temp <- mean(temp$temp)
+
+tempC = (5/9) * (temp - 32)
+tempC
+```
+
+Самолеты какой авиакомпании совершили больше всего вылетов в июне?
+```{r}
+mostFlights <- flights %>%
+  filter(month == 6) %>%
+  count(carrier) %>%
+  arrange(desc(n)) %>%
+  head(1)
+mostFlights
+```
+
+Самолеты какой авиакомпании задерживались чаще других в 2013 году?
+```{r}
+mostDelay <- flights %>%
+  filter(dep_delay > 0, year == 2013) %>%
+  count(carrier) %>%
+  arrange(desc(n)) %>%
+  head(1)
+
+mostDelay
+```
 
 ## Оценка результата
 
