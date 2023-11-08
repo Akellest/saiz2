@@ -34,6 +34,8 @@ library(dplyr)
 
         intersect, setdiff, setequal, union
 
+### Сколько строк в датафрейме
+
 ``` r
 data(starwars)
 num_rows <- nrow(starwars)
@@ -42,11 +44,15 @@ num_rows
 
     [1] 87
 
+### Сколько столбцов в датафрейме
+
 ``` r
 starwars %>% ncol()
 ```
 
     [1] 14
+
+### Примерный вид датафрейма
 
 ``` r
 starwars %>% glimpse()
@@ -69,37 +75,36 @@ starwars %>% glimpse()
     $ vehicles   <list> <"Snowspeeder", "Imperial Speeder Bike">, <>, <>, <>, "Imp…
     $ starships  <list> <"X-wing", "Imperial shuttle">, <>, <>, "TIE Advanced x1",…
 
+### Сколько уникальных рас персонажей представлено
+
 ``` r
 unique_species <- starwars %>%
   select(species) %>%
   distinct()
-cat("Количество уникальных рас персонажей:", nrow(unique_species), "\n")
+nrow(unique_species)
 ```
 
-    Количество уникальных рас персонажей: 38 
+    [1] 38
+
+### Самый высокий персонаж
 
 ``` r
 tallest_character <- starwars %>%
   filter(height == max(height, na.rm = TRUE))
 names_only <- tallest_character %>%
   select(name)
-cat("Самый высокий персонаж:\n", as.character(unlist(names_only))[1])
+as.character(unlist(names_only))[1]
 ```
 
-    Самый высокий персонаж:
-     Yarael Poof
+    [1] "Yarael Poof"
+
+### Персонажи ниже 170
 
 ``` r
 name_height <- starwars %>%
   filter(height < 170) %>%
   select(name, height)
 
-cat("Персонажи ниже 170 см:\n")
-```
-
-    Персонажи ниже 170 см:
-
-``` r
 print(name_height)
 ```
 
@@ -118,17 +123,13 @@ print(name_height)
     10 Watto                    137
     # ℹ 13 more rows
 
+### ИМТ для всех персонажей
+
 ``` r
 starwars_with_bmi <- starwars %>%
   mutate(BMI = mass / (height/100)^2)
 mass_height <- starwars_with_bmi %>%
   select(name, mass, height)
-cat("Персонажи с ИМТ:\n")
-```
-
-    Персонажи с ИМТ:
-
-``` r
 print(mass_height)
 ```
 
@@ -147,6 +148,8 @@ print(mass_height)
     10 Obi-Wan Kenobi        77    182
     # ℹ 77 more rows
 
+### 10 самых “вытянутых” персонажей
+
 ``` r
 stretched10 <- starwars %>%
   mutate(stretchiness = mass / height) %>%
@@ -154,12 +157,6 @@ stretched10 <- starwars %>%
   head(10)
 mass_height <- stretched10 %>%
   select(name, mass, height)
-cat("10 самых 'вытянутых' персонажей:\n")
-```
-
-    10 самых 'вытянутых' персонажей:
-
-``` r
 print(mass_height)
 ```
 
@@ -177,13 +174,38 @@ print(mass_height)
      9 Dexter Jettster         102    198
     10 Chewbacca               112    228
 
-    #!!!!!!!!!!!!!
-    library(tidyr)
-    avg_age_by_species <- starwars %>%
-      group_by(species) %>%
-      summarise(mean_age = mean(birth_year, na.rm = TRUE))
-    cat("Средний возраст персонажей по каждой расе:\n")
-    avg_age_by_species %>% drop_na(mean_age)
+### Средний возраст персонажей каждой расы
+
+``` r
+grouped_data <- starwars %>%
+  group_by(species) %>%
+  summarize(mean_age = mean(birth_year, na.rm = TRUE)) %>%
+  filter(!is.nan(mean_age))
+
+grouped_data
+```
+
+    # A tibble: 16 × 2
+       species        mean_age
+       <chr>             <dbl>
+     1 Cerean             92  
+     2 Droid              53.3
+     3 Ewok                8  
+     4 Gungan             52  
+     5 Human              53.4
+     6 Hutt              600  
+     7 Kel Dor            22  
+     8 Mirialan           49  
+     9 Mon Calamari       41  
+    10 Rodian             44  
+    11 Trandoshan         53  
+    12 Twi'lek            48  
+    13 Wookiee           200  
+    14 Yoda's species    896  
+    15 Zabrak             54  
+    16 <NA>               62  
+
+### Найти самый распространенный цвет глаз персонажей
 
 ``` r
 most_common_eye_color <- starwars %>%
@@ -191,12 +213,6 @@ most_common_eye_color <- starwars %>%
   summarise(count = n()) %>%
   arrange(desc(count)) %>%
   head(1)
-cat("Самый распространенный цвет глаз:\n")
-```
-
-    Самый распространенный цвет глаз:
-
-``` r
 print(most_common_eye_color)
 ```
 
@@ -205,16 +221,12 @@ print(most_common_eye_color)
       <chr>     <int>
     1 brown        21
 
+### Средняя длина имени в каждой расе
+
 ``` r
 avg_name_length_by_species <- starwars %>%
   group_by(species) %>%
   summarise(mean_name_length = mean(nchar(name)))
-cat("Средняя длина имени в каждой расе:\n")
-```
-
-    Средняя длина имени в каждой расе:
-
-``` r
 print(avg_name_length_by_species)
 ```
 
@@ -232,3 +244,12 @@ print(avg_name_length_by_species)
      9 Geonosian            17   
     10 Gungan               11.7 
     # ℹ 28 more rows
+
+## Оценка результата
+
+Задание было выполнено, изучен пакет *dplyr*
+
+## Вывод
+
+Были развиты практические навыки использования языка программирования R
+для обработки данных
