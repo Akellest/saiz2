@@ -1,7 +1,10 @@
 ---
-title: "pr1"
-format: html
-editor: visual
+title: "Лабораторная работа №1"
+format:   
+  md:
+    output-file: README.md
+editor_options: 
+  chunk_output_type: inline
 ---
 
 Quarto
