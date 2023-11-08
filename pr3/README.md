@@ -47,8 +47,7 @@ library(nycflights13)
 
 ``` r
 frame <- data(package = "nycflights13")
-num_rows <- nrow(frame$results)
-print(num_rows)
+nrow(frame$results)
 ```
 
     [1] 5
@@ -121,7 +120,7 @@ glimpse(flights)
 
 ``` r
 num_carriers <- n_distinct(flights$carrier)
-print(num_carriers)
+num_carriers
 ```
 
     [1] 16
@@ -132,7 +131,7 @@ print(num_carriers)
 may <- flights %>%
   filter(month == 5, dest == "JFK")
 num_may <- nrow(may)
-print(num_may)
+num_may
 ```
 
     [1] 0
