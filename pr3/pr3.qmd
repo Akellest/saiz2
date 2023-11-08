@@ -30,8 +30,7 @@ library(nycflights13)
 Сколько встроенных в пакет nycflights13 датафреймов?
 ```{r}
 frame <- data(package = "nycflights13")
-num_rows <- nrow(frame$results)
-print(num_rows)
+nrow(frame$results)
 ```
 Сколько строк в каждом датафрейме?
 ```{r}
@@ -60,7 +59,7 @@ glimpse(flights)
 Сколько компаний-перевозчиков (carrier) учитывают эти наборы данных (представлено в наборах данных)?
 ```{r}
 num_carriers <- n_distinct(flights$carrier)
-print(num_carriers)
+num_carriers
 ```
 
 Сколько рейсов принял аэропорт John F Kennedy Intl в мае?
@@ -68,7 +67,7 @@ print(num_carriers)
 may <- flights %>%
   filter(month == 5, dest == "JFK")
 num_may <- nrow(may)
-print(num_may)
+num_may
 ```
 
 Какой самый северный аэропорт?
