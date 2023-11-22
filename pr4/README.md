@@ -77,19 +77,7 @@ library(tidyverse)
 data <- read.csv("dns.log", sep="\t", header=FALSE)
 header <- read.csv("header.csv")
 colnames(data) <- header[,1]
-data %>% head(1)
 ```
-
-              ts                uid        id1_orig id2_resp       id3_host
-    1 1331901006 CWGtK431H9XuaTN4fi 192.168.202.100    45658 192.168.27.203
-      id4_port proto trans_id
-    1      137   udp    33008
-                                                                        query
-    1 *\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
-      qclass qclass_name qtype qtype_name rcode rcode_name    QR     AA TC RD    RA
-    1      1  C_INTERNET    33        SRV     0     NOERROR FALSE FALSE FALSE FALSE
-      Z answers TTLs  rejected 
-    1 1       -     -     FALSE
 
 ### Сколько участников информационного обмена в сети Доброй Организации?
 
