@@ -38,41 +38,42 @@ data %>% head(1)
 ```{r}
 result <- data %>%
   select(id1_orig, id3_host) %>%
-  gather(key = "id", value = "value") %>%
-  count(value, sort = TRUE)
-print(result)
+  gather(key = "id", value = "IP") %>%
+  count(IP, sort = TRUE)
+print(result) %>%
+  head(10)
 ```
 
 
 ### Какое соотношение участников обмена внутри сети и участников обращений к внешним ресурсам?
 ```{r}
-
-
+kResponse <- data %>%
+  filter(data$QR == TRUE) %>%
+  summarise(k = n())
+kResponse/nrow(data)
 ```
 
-
-
-
+### Найдите топ-10 участников сети, проявляющих наибольшую сетевую активность
 ```{r}
-
+result <- data %>%
+  select(id1_orig, id3_host) %>%
+  gather(key = "id", value = "IP") %>%
+  count(IP, sort = TRUE) %>%
+  head(10)
+result
 ```
 
-
-
-
-
-
+### Найдите топ-10 доменов, к которым обращаются пользователи сети и соответственное количество обращений
 ```{r}
-
+domain_counts <- data %>%
+  group_by(query) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(10)
+domain_counts
 ```
 
-
-
-
-
-
-
-
+### Опеределите базовые статистические характеристики (функция summary()) интервала времени между последовательным обращениями к топ-10 доменам
 ```{r}
 
 ```
