@@ -80,38 +80,29 @@ colnames(data) <- header[,1]
 data %>% head(1)
 ```
 
-             ts                uid         id1_orig id2_resp       id3_host
+              ts                uid        id1_orig id2_resp       id3_host
     1 1331901006 CWGtK431H9XuaTN4fi 192.168.202.100    45658 192.168.27.203
-      id4_port proto  trans_id 
-    1      137    udp     33008
-                                                                       query 
+      id4_port proto trans_id
+    1      137   udp    33008
+                                                                        query
     1 *\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00
-      qclass  qclass_name  qtype 
-    1       1   C_INTERNET     33
-      qtype_name ,string,"Name of the query type (e.g. A, AAAA, PTR) " rcode 
-    1                                                              SRV      0
-      rcode_name ,string,"Descriptive name of the response code (e.g. NOERROR, NXDOMAIN) "
-    1                                                                              NOERROR
-      QR ,bool ,"Was this a query or a response? T = response, F = query "   AA 
-    1                                                                FALSE FALSE
-      TC RD    RA 
-    1  FALSE FALSE
-      Z ,count,"Reserved field, should be zero in all queries & responses "
-    1                                                                     1
-      answers  TTLs  rejected 
-    1        -     -     FALSE
+      qclass qclass_name qtype qtype_name rcode rcode_name    QR     AA TC RD    RA
+    1      1  C_INTERNET    33        SRV     0     NOERROR FALSE FALSE FALSE FALSE
+      Z answers TTLs  rejected 
+    1 1       -     -     FALSE
 
 ### Сколько участников информационного обмена в сети Доброй Организации?
 
 ``` r
 result <- data %>%
   select(id1_orig, id3_host) %>%
-  gather(key = "id", value = "value") %>%
-  count(value, sort = TRUE)
-print(result)
+  gather(key = "id", value = "IP") %>%
+  count(IP, sort = TRUE)
+print(result) %>%
+  head(10)
 ```
 
-                                        value      n
+                                           IP      n
     1                           192.168.207.4 266627
     2                           10.10.117.210  75943
     3                         192.168.202.255  68720
@@ -1472,7 +1463,79 @@ print(result)
     1358                      255.255.255.255      1
     1359            fe80::423c:fcff:fe06:98a4      1
 
+                    IP      n
+    1    192.168.207.4 266627
+    2    10.10.117.210  75943
+    3  192.168.202.255  68720
+    4   192.168.202.93  26522
+    5     172.19.1.100  25481
+    6  192.168.202.103  18121
+    7   192.168.202.76  16978
+    8   192.168.202.97  16176
+    9  192.168.202.141  14976
+    10 192.168.202.110  14493
+
 ### Какое соотношение участников обмена внутри сети и участников обращений к внешним ресурсам?
+
+``` r
+kResponse <- data %>%
+  filter(data$QR == TRUE) %>%
+  summarise(k = n())
+kResponse/nrow(data)
+```
+
+                k
+    1 0.002647598
+
+### Найдите топ-10 участников сети, проявляющих наибольшую сетевую активность
+
+``` r
+result <- data %>%
+  select(id1_orig, id3_host) %>%
+  gather(key = "id", value = "IP") %>%
+  count(IP, sort = TRUE) %>%
+  head(10)
+result
+```
+
+                    IP      n
+    1    192.168.207.4 266627
+    2    10.10.117.210  75943
+    3  192.168.202.255  68720
+    4   192.168.202.93  26522
+    5     172.19.1.100  25481
+    6  192.168.202.103  18121
+    7   192.168.202.76  16978
+    8   192.168.202.97  16176
+    9  192.168.202.141  14976
+    10 192.168.202.110  14493
+
+### Найдите топ-10 доменов, к которым обращаются пользователи сети и соответственное количество обращений
+
+``` r
+domain_counts <- data %>%
+  group_by(query) %>%
+  summarise(count = n()) %>%
+  arrange(desc(count)) %>%
+  head(10)
+domain_counts
+```
+
+    # A tibble: 10 × 2
+       query                                                                   count
+       <chr>                                                                   <int>
+     1 "teredo.ipv6.microsoft.com"                                             39273
+     2 "tools.google.com"                                                      14057
+     3 "www.apple.com"                                                         13390
+     4 "time.apple.com"                                                        13109
+     5 "safebrowsing.clients.google.com"                                       11658
+     6 "*\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x… 10401
+     7 "WPAD"                                                                   9134
+     8 "44.206.168.192.in-addr.arpa"                                            7248
+     9 "HPE8AA67"                                                               6929
+    10 "ISATAP"                                                                 6569
+
+### Опеределите базовые статистические характеристики (функция summary()) интервала времени между последовательным обращениями к топ-10 доменам
 
 ## Оценка результата
 
