@@ -21,7 +21,7 @@ editor_options:
 
 ## Ход работы
 
-Устанавливаем пакеты *dplyr* для последующей работы
+Устанавливаем пакеты *dplyr*, *stringr* для последующей работы
 ```{r}
 library(dplyr)
 library(stringr)
@@ -32,7 +32,7 @@ library(stringr)
 data1 <- read.csv("mir.csv-01.csv")
 wireP <- data1[1:169, ]
 data2 <- read.csv("mir.csv-01.csv", skip = 169)
-queries <- data2[1:nrow(df), ]
+queries <- data2[1:nrow(data1), ]
 ```
 
 Удаление лишних пробелов из всех ячеек
@@ -51,7 +51,8 @@ to_convertDate <- c('First.time.seen', 'Last.time.seen')
 to_convertInt <- c('channel', 'Speed', 'Power', 'X..beacons', 'X..IV', 'ID.length')
 
 wireP <- wireP %>%
-  mutate_at(to_convertDate, funs(as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
+  mutate_at(to_convertDate, list(~as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
+
 wireP <- wireP %>%
   mutate_at(to_convertInt, as.integer)
 
@@ -60,7 +61,7 @@ to_convertDate1 <- c('First.time.seen', 'Last.time.seen')
 to_convertInt1 <- c('Power', 'X..packets')
 
 queries <- queries %>%
-  mutate_at(to_convertDate1, funs(as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
+  mutate_at(to_convertDate1, list(~as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
 queries <- queries %>%
   mutate_at(to_convertInt1, as.integer)
 ```
@@ -70,8 +71,58 @@ queries <- queries %>%
 wireP %>% glimpse()
 queries %>% glimpse()
 ```
+Небезопасные устройства и точки доступа
+```{r}
+vulnerateP <- wireP %>%
+  filter(Privacy == "OPN") %>%
+  distinct(BSSID, ESSID)
+vulnerateP
+```
+
+Вывод всех идентификаторов сети в отдельный файл
+```{r}
+write.table(vulnerateP[1], file = "vulnery.txt", sep = "\t", quote = FALSE, row.names = FALSE)
+```
+Проверка BSSID через https://www.wireshark.org/tools/oui-lookup.html:
+
+1. 00:03:7A Taiyo Yuden Co., Ltd.
+2. 00:03:7F Atheros Communications, Inc.
+3. 00:25:00 Apple, Inc.
+4. 00:26:99 Cisco Systems, Inc
+5. E0:D9:E3 Eltex Enterprise Ltd.
+6. E8:28:C1 Eltex Enterprise Ltd.
 
 
+Сети и устройства, использующие протокол шифрования WPA3
+```{r}
+WPA3 <- wireP %>%
+  filter(str_detect(Privacy, "WPA3")) %>%
+  select(BSSID, ESSID) %>%
+  distinct()
+WPA3
+```
+
+Вычисление длительности сессий каждого пользователя
+```{r}
+session <- wireP %>%
+  mutate(duration = difftime(Last.time.seen, First.time.seen, units = "mins")) %>%
+  select(BSSID, ESSID, duration) %>%
+  arrange(desc(duration))
+
+session <- mutate(session, duration = round(as.numeric(session$duration), 2))
+
+session
+```
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
 
 
 
