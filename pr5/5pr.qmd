@@ -9,10 +9,10 @@ editor_options:
 
 ## Цель работы
 
-1. Получить знания о методах исследования радиоэлектронной обстановки.
-2. Составить представление о механизмах работы Wi-Fi сетей на канальном и сетевом уровне модели OSI.
-3. Зекрепить практические навыки использования языка программирования R для обработки данных
-4. Закрепить знания основных функций обработки данных экосистемы tidyverse языка R
+1.  Получить знания о методах исследования радиоэлектронной обстановки.
+2.  Составить представление о механизмах работы Wi-Fi сетей на канальном и сетевом уровне модели OSI.
+3.  Зекрепить практические навыки использования языка программирования R для обработки данных
+4.  Закрепить знания основных функций обработки данных экосистемы tidyverse языка R
 
 ## Исходные данные
 
@@ -21,13 +21,17 @@ editor_options:
 
 ## Ход работы
 
-Устанавливаем пакеты *dplyr*, *stringr* для последующей работы
+Устанавливаем пакеты *dplyr*, *stringr*, *lubridate*, *tidyr* для последующей работы
+
 ```{r}
 library(dplyr)
 library(stringr)
+library(lubridate)
+library(tidyr)
 ```
 
 Загрузка и прочтение файла
+
 ```{r}
 data1 <- read.csv("mir.csv-01.csv")
 wireP <- data1[1:169, ]
@@ -36,6 +40,7 @@ queries <- data2[1:nrow(data1), ]
 ```
 
 Удаление лишних пробелов из всех ячеек
+
 ```{r}
 wireP <- wireP %>%
   mutate_all(~str_squish(.))
@@ -44,8 +49,8 @@ queries <- queries %>%
   mutate_all(~str_squish(.))
 ```
 
-
 Изменение формата столбцов
+
 ```{r}
 to_convertDate <- c('First.time.seen', 'Last.time.seen')
 to_convertInt <- c('channel', 'Speed', 'Power', 'X..beacons', 'X..IV', 'ID.length')
@@ -67,11 +72,16 @@ queries <- queries %>%
 ```
 
 Просмотр получившихся таблиц
+
 ```{r}
 wireP %>% glimpse()
 queries %>% glimpse()
 ```
+
+-   Точки доступа
+
 Небезопасные устройства и точки доступа
+
 ```{r}
 vulnerateP <- wireP %>%
   filter(Privacy == "OPN") %>%
@@ -80,20 +90,22 @@ vulnerateP
 ```
 
 Вывод всех идентификаторов сети в отдельный файл
+
 ```{r}
 write.table(vulnerateP[1], file = "vulnery.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 ```
+
 Проверка BSSID через https://www.wireshark.org/tools/oui-lookup.html:
 
-1. 00:03:7A Taiyo Yuden Co., Ltd.
-2. 00:03:7F Atheros Communications, Inc.
-3. 00:25:00 Apple, Inc.
-4. 00:26:99 Cisco Systems, Inc
-5. E0:D9:E3 Eltex Enterprise Ltd.
-6. E8:28:C1 Eltex Enterprise Ltd.
-
+1.  00:03:7A Taiyo Yuden Co., Ltd.
+2.  00:03:7F Atheros Communications, Inc.
+3.  00:25:00 Apple, Inc.
+4.  00:26:99 Cisco Systems, Inc
+5.  E0:D9:E3 Eltex Enterprise Ltd.
+6.  E8:28:C1 Eltex Enterprise Ltd.
 
 Сети и устройства, использующие протокол шифрования WPA3
+
 ```{r}
 WPA3 <- wireP %>%
   filter(str_detect(Privacy, "WPA3")) %>%
@@ -103,38 +115,105 @@ WPA3
 ```
 
 Вычисление длительности сессий каждого пользователя
+
 ```{r}
 session <- wireP %>%
-  mutate(duration = difftime(Last.time.seen, First.time.seen, units = "mins")) %>%
-  select(BSSID, ESSID, duration) %>%
-  arrange(desc(duration))
-
-session <- mutate(session, duration = round(as.numeric(session$duration), 2))
+  mutate(session = Last.time.seen - First.time.seen) %>%
+  mutate(session = seconds_to_period(session)) %>%
+  select(BSSID, ESSID, session) %>%
+  arrange(desc(session)) %>%
+  head(10)
 
 session
+
 ```
 
+10 быстрых точек доступа
 
 ```{r}
-
+theFastest <- arrange(wireP, desc(Speed)) %>%
+  select(BSSID, ESSID, Speed) %>%
+  head(10)
+theFastest
 ```
 
+Запросы, отфильтрованные по частоте отправки Beacons в секунду
 
 ```{r}
+BPM <- wireP %>%
+  mutate(session = difftime(Last.time.seen, First.time.seen, units = "mins")) %>%
+  select(BSSID, ESSID, session, X..beacons) %>%
+  filter(session != 0, X..beacons != 0) %>%
+  mutate(BPM = round(session / X..beacons, 3)) %>%
+  arrange(BPM)
 
+BPM
 ```
 
+-   Данные клиентов
 
-
-
-
-
-
+Производители устройств
 ```{r}
+unique_rows <- unique(queries[6][queries[6] != "(not associated)" & queries[6] != "", ])
+write.table(unique_rows, file = "vendors.txt", sep = "\t", quote = FALSE, row.names = FALSE)
 
+# поиск производителей через https://www.wireshark.org/tools/oui-lookup.html
+# записываем получившийся список в файл input.txt
+# Считывание строк из файла
+
+lines <- readLines("input.txt")
+data <- strsplit(lines, " ", fixed = TRUE)
+
+result <- data.frame(
+  BSSID = sapply(data, function(x) x[1]),
+  vendor = sapply(data, function(x) paste(x[-1], collapse = " "))
+)
+
+result
+```
+
+Устройства, не рандомизирующие свой MAC-адрес
+```{r}
+notmac <- queries %>%
+  filter(BSSID == "(not associated)") %>%
+  select(Station.MAC, BSSID, Probed.ESSIDs) %>%
+  head(10)
+
+notmac
+```
+
+Кластеризовать запросы от устройств к точкам доступа по их именам. Определить время появления устройства в зоне радиовидимости и время выхода его из нее
+```{r}
+cluster <- queries %>%
+  filter(!is.na(Probed.ESSIDs) & Probed.ESSIDs != "") %>%
+  group_by(Station.MAC, Probed.ESSIDs, .add = TRUE) %>%
+  summarize(First_time_seen = min(First.time.seen),
+            Last_time_seen = max(Last.time.seen),
+            .groups = 'drop') %>%
+  head(10)
+
+cluster
 ```
 
 
+Оценить стабильность уровня сигнала внури кластера во времени. Выявить наиболее стабильный кластер
+```{r}
+stability_summary <- queries %>%
+  group_by(Station.MAC, Probed.ESSIDs) %>%
+  summarize(
+    Mean_Power = mean(Power, na.rm = TRUE),
+    .groups = 'drop'
+  ) %>%
+  filter(!is.na(Mean_Power)) %>%
+  arrange(Mean_Power)
+
+stability_summary
+
+indexMin <- which.min(queries$Power)
+theStablest <- queries[indexMin, ] %>%
+  select(Station.MAC, First.time.seen, Last.time.seen, Power, BSSID, Probed.ESSIDs)
+theStablest
+```
 
 ## Оценка результата
 
