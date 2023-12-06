@@ -160,7 +160,8 @@ queries %>% glimpse()
 ``` r
 vulnerateP <- wireP %>%
   filter(Privacy == "OPN") %>%
-  distinct(BSSID, ESSID)
+  distinct(BSSID, ESSID) %>%
+  head(10)
 vulnerateP
 ```
 
@@ -175,38 +176,6 @@ vulnerateP
     8  E8:28:C1:DE:74:32 MIREA_HOTSPOT
     9  E8:28:C1:DC:C8:32 MIREA_HOTSPOT
     10 E8:28:C1:DD:04:50  MIREA_GUESTS
-    11 E8:28:C1:DD:04:51              
-    12 E8:28:C1:DC:C8:30  MIREA_GUESTS
-    13 E8:28:C1:DE:74:30              
-    14 E0:D9:E3:48:FF:D2              
-    15 E8:28:C1:DC:B2:41  MIREA_GUESTS
-    16 E8:28:C1:DC:B2:40 MIREA_HOTSPOT
-    17 00:26:99:F2:7A:E0              
-    18 E8:28:C1:DC:B2:42              
-    19 E8:28:C1:DD:04:40 MIREA_HOTSPOT
-    20 E8:28:C1:DD:04:41  MIREA_GUESTS
-    21 E8:28:C1:DE:47:D2 MIREA_HOTSPOT
-    22 02:BC:15:7E:D5:DC       MT_FREE
-    23 E8:28:C1:DC:C6:B1              
-    24 E8:28:C1:DD:04:42              
-    25 E8:28:C1:DC:C8:31              
-    26 E8:28:C1:DE:47:D1              
-    27 00:AB:0A:00:10:10              
-    28 E8:28:C1:DC:C6:B0  MIREA_GUESTS
-    29 E8:28:C1:DC:C6:B2              
-    30 E8:28:C1:DC:BD:50  MIREA_GUESTS
-    31 E8:28:C1:DC:0B:B2              
-    32 E8:28:C1:DC:33:12              
-    33 00:03:7A:1A:03:56       MT_FREE
-    34 00:03:7F:12:34:56       MT_FREE
-    35 00:3E:1A:5D:14:45       MT_FREE
-    36 E0:D9:E3:49:00:B1              
-    37 E8:28:C1:DC:BD:52 MIREA_HOTSPOT
-    38 00:26:99:F2:7A:EF              
-    39 02:67:F1:B0:6C:98       MT_FREE
-    40 02:CF:8B:87:B4:F9       MT_FREE
-    41 00:53:7A:99:98:56       MT_FREE
-    42 E8:28:C1:DE:47:D0  MIREA_GUESTS
 
 Вывод всех идентификаторов сети в отдельный файл
 
@@ -297,191 +266,35 @@ BPM <- wireP %>%
   select(BSSID, ESSID, session, X..beacons) %>%
   filter(session != 0, X..beacons != 0) %>%
   mutate(BPM = round(session / X..beacons, 3)) %>%
-  arrange(BPM)
+  mutate(session = round(session, 3)) %>%
+  arrange(BPM) %>%
+  head(10)
 
 BPM
 ```
 
-                   BSSID                    ESSID           session X..beacons
-    1  F2:30:AB:E9:03:ED          iPhone (Uliana)   0.11666667 mins          6
-    2  B2:CF:C0:00:4A:60      Михаил's Galaxy M32   0.08333333 mins          4
-    3  3A:DA:00:F9:0C:02        iPhone XS Max 🦊🐱🦊   0.15000000 mins          5
-    4  02:BC:15:7E:D5:DC                  MT_FREE   0.03333333 mins          1
-    5  00:3E:1A:5D:14:45                  MT_FREE   0.03333333 mins          1
-    6  76:C5:A0:70:08:96                            0.03333333 mins          1
-    7  D2:25:91:F6:6C:D8                     Саня   0.21666667 mins          5
-    8  BE:F1:71:D6:10:D7             C322U21 0566 157.68333333 mins       1647
-    9  00:03:7A:1A:03:56                  MT_FREE   0.10000000 mins          1
-    10 38:1A:52:0D:84:D7 EBFCD57F-EE81fI_DL_1AO2T  71.98333333 mins        704
-    11 0A:C5:E1:DB:17:7B            AndroidAP177B 143.46666667 mins       1251
-    12 1E:93:E3:1B:3C:F4               Galaxy A71 160.55000000 mins       1390
-    13 D2:6D:52:61:51:5D                           77.26666667 mins        647
-    14 BE:F1:71:D5:0E:53             C322U06 9080  76.30000000 mins        617
-    15 4A:86:77:04:B7:28        iPhone (Искандер)  50.13333333 mins        361
-    16 3A:70:96:C6:30:2C        iPhone (Искандер)  21.66666667 mins        145
-    17 76:70:AF:A4:D2:AF                     витя  45.55000000 mins        253
-    18 BE:F1:71:D5:17:8B             C322U13 3965 157.78333333 mins        846
-    19 AA:F4:3F:EE:49:0B         Redmi Note 8 Pro 150.75000000 mins        738
-    20 6E:C7:EC:16:DA:1A                     Cnet 162.15000000 mins        750
-    21 4A:EC:1E:DB:BF:95           POCO X5 Pro 5G 110.96666667 mins        510
-    22 56:C5:2B:9F:84:90               OnePlus 6T  69.55000000 mins        317
-    23 9A:75:A8:B9:04:1E                       KC 160.46666667 mins        694
-    24 9C:A5:13:28:D5:89           Galaxy M012063   0.71666667 mins          3
-    25 36:46:53:81:12:A0       GGWPRedmi Note 10S  20.80000000 mins         82
-    26 38:1A:52:0D:85:1D EBFCD5C1-EE81fI_DN11AOcY  34.70000000 mins        130
-    27 38:1A:52:0D:8F:EC EBFCD6C2-EE81fI_DR21AOa0  43.91666667 mins        107
-    28 2E:FE:13:D0:96:51         Redmi Note 8 Pro   0.96666667 mins          2
-    29 CE:48:E7:86:4E:33       iPhone (Анастасия)   4.91666667 mins          9
-    30 8E:1F:94:96:DA:FD       iPhone (Анастасия)   6.91666667 mins         12
-    31 E8:28:C1:DC:B2:51                          162.08333333 mins        279
-    32 E8:28:C1:DC:B2:50             MIREA_GUESTS 162.10000000 mins        260
-    33 5E:C7:C0:E4:D7:D4                realme 10  54.41666667 mins         85
-    34 E8:28:C1:DC:B2:52            MIREA_HOTSPOT 162.58333333 mins        251
-    35 8E:55:4A:85:5B:01                 Vladimir 162.05000000 mins        248
-    36 38:1A:52:0D:90:5D EBFCD615-EE81fI_DOL1AO8w  70.91666667 mins         90
-    37 1C:7E:E5:8E:B7:DE                          158.73333333 mins        142
-    38 38:1A:52:0D:90:A1 EBFCD597-EE81fI_DMN1AOe1 144.35000000 mins        112
-    39 A2:64:E8:97:58:EE                 Mi Phone  70.86666667 mins         52
-    40 1E:C2:8E:D8:30:91                     Damy   8.30000000 mins          6
-    41 48:5B:39:F9:7A:48                          162.08333333 mins        109
-    42 00:26:99:F2:7A:E2                     GIVC 161.78333333 mins         84
-    43 38:1A:52:0D:97:60 EBFCD593-EE81fI_DMJ1AOI4  68.10000000 mins         28
-    44 00:26:99:F2:7A:E1                      IKB 158.20000000 mins         65
-    45 00:26:99:BA:75:80                     GIVC 161.83333333 mins         61
-    46 A6:02:B9:73:2F:76             C239U51 0701  69.06666667 mins         26
-    47 9E:A3:A9:D6:28:3C                          157.51666667 mins         51
-    48 00:23:EB:E3:81:FE                      IKB 155.08333333 mins         47
-    49 00:23:EB:E3:81:FD                     GIVC 155.08333333 mins         46
-    50 9A:9F:06:44:24:5B    Long Huong Galaxy M12  76.20000000 mins         22
-    51 96:FF:FC:91:EF:64                           32.13333333 mins          9
-    52 A6:02:B9:73:81:47             C239U53 6056  70.40000000 mins         19
-    53 0C:80:63:A9:6E:EE                          160.46666667 mins         42
-    54 12:51:07:FF:29:D6     DESKTOP-KITJO8R 5262 124.71666667 mins         32
-    55 9E:A3:A9:DB:7E:01                          159.25000000 mins         40
-    56 92:F5:7B:43:0B:69                 Redmi 12  73.20000000 mins         18
-    57 86:DF:BF:E4:2F:23     DESKTOP-Q7R0KRV 2433  44.80000000 mins         11
-    58 A6:02:B9:73:83:18             C239U52 6706  76.28333333 mins         17
-    59 E8:28:C1:DD:04:40            MIREA_HOTSPOT 156.66666667 mins         30
-    60 26:20:53:0C:98:E8                           17.41666667 mins          3
-    61 E8:28:C1:DD:04:42                          138.63333333 mins         23
-    62 E8:28:C1:DD:04:41             MIREA_GUESTS 156.66666667 mins         25
-    63 B6:C4:55:B5:53:24                  Redmi 9  49.78333333 mins          7
-    64 E8:28:C1:DD:04:50             MIREA_GUESTS 149.81666667 mins         20
-    65 00:23:EB:E3:81:F1                      IKB 155.80000000 mins         19
-    66 E8:28:C1:DC:BD:50             MIREA_GUESTS  45.71666667 mins          5
-    67 E8:28:C1:DD:04:51                           94.05000000 mins          9
-    68 02:67:F1:B0:6C:98                  MT_FREE  10.85000000 mins          1
-    69 E8:28:C1:DC:C8:32            MIREA_HOTSPOT 159.25000000 mins         12
-    70 E8:28:C1:DC:C8:31                          119.98333333 mins          8
-    71 E8:28:C1:DC:C6:B0             MIREA_GUESTS  64.65000000 mins          4
-    72 00:26:CB:AA:62:71                      IKB  32.81666667 mins          2
-    73 9E:A3:A9:BF:12:C0                          154.50000000 mins          9
-    74 E8:28:C1:DC:C8:30             MIREA_GUESTS 140.75000000 mins          7
-    75 00:23:EB:E3:81:F2                     GIVC 159.91666667 mins          7
-    76 7E:3A:10:A7:59:4E                 vivo Y21  76.85000000 mins          3
-    77 E8:28:C1:DC:B2:41             MIREA_GUESTS 138.45000000 mins          5
-    78 E8:28:C1:DC:C6:B1                          139.83333333 mins          5
-    79 E8:28:C1:DC:B2:42                          144.88333333 mins          5
-    80 E8:28:C1:DC:B2:40            MIREA_HOTSPOT 153.53333333 mins          5
-    81 0A:24:D8:D9:24:70                IgorKotya  67.85000000 mins          2
-    82 E8:28:C1:DE:74:31                           73.88333333 mins          2
-    83 EA:7B:9B:D8:56:34                 POCO C40  37.35000000 mins          1
-    84 E8:28:C1:DD:04:52            MIREA_HOTSPOT 162.93333333 mins          4
-    85 10:50:72:00:11:08           MGTS_GPON_B563  83.28333333 mins          2
-    86 E8:28:C1:DE:47:D2            MIREA_HOTSPOT 150.68333333 mins          3
-    87 EA:D8:D1:77:C8:08  DIRECT-08-HP M428fdw LJ  83.25000000 mins          1
-    88 E8:28:C1:DE:74:32            MIREA_HOTSPOT  86.50000000 mins          1
-    89 56:99:98:EE:5A:4E            tementy-phone 146.85000000 mins          1
-                BPM
-    1    0.019 mins
-    2    0.021 mins
-    3    0.030 mins
-    4    0.033 mins
-    5    0.033 mins
-    6    0.033 mins
-    7    0.043 mins
-    8    0.096 mins
-    9    0.100 mins
-    10   0.102 mins
-    11   0.115 mins
-    12   0.116 mins
-    13   0.119 mins
-    14   0.124 mins
-    15   0.139 mins
-    16   0.149 mins
-    17   0.180 mins
-    18   0.187 mins
-    19   0.204 mins
-    20   0.216 mins
-    21   0.218 mins
-    22   0.219 mins
-    23   0.231 mins
-    24   0.239 mins
-    25   0.254 mins
-    26   0.267 mins
-    27   0.410 mins
-    28   0.483 mins
-    29   0.546 mins
-    30   0.576 mins
-    31   0.581 mins
-    32   0.623 mins
-    33   0.640 mins
-    34   0.648 mins
-    35   0.653 mins
-    36   0.788 mins
-    37   1.118 mins
-    38   1.289 mins
-    39   1.363 mins
-    40   1.383 mins
-    41   1.487 mins
-    42   1.926 mins
-    43   2.432 mins
-    44   2.434 mins
-    45   2.653 mins
-    46   2.656 mins
-    47   3.089 mins
-    48   3.300 mins
-    49   3.371 mins
-    50   3.464 mins
-    51   3.570 mins
-    52   3.705 mins
-    53   3.821 mins
-    54   3.897 mins
-    55   3.981 mins
-    56   4.067 mins
-    57   4.073 mins
-    58   4.487 mins
-    59   5.222 mins
-    60   5.806 mins
-    61   6.028 mins
-    62   6.267 mins
-    63   7.112 mins
-    64   7.491 mins
-    65   8.200 mins
-    66   9.143 mins
-    67  10.450 mins
-    68  10.850 mins
-    69  13.271 mins
-    70  14.998 mins
-    71  16.163 mins
-    72  16.408 mins
-    73  17.167 mins
-    74  20.107 mins
-    75  22.845 mins
-    76  25.617 mins
-    77  27.690 mins
-    78  27.967 mins
-    79  28.977 mins
-    80  30.707 mins
-    81  33.925 mins
-    82  36.942 mins
-    83  37.350 mins
-    84  40.733 mins
-    85  41.642 mins
-    86  50.228 mins
-    87  83.250 mins
-    88  86.500 mins
-    89 146.850 mins
+                   BSSID                    ESSID      session X..beacons
+    1  F2:30:AB:E9:03:ED          iPhone (Uliana)   0.117 mins          6
+    2  B2:CF:C0:00:4A:60      Михаил's Galaxy M32   0.083 mins          4
+    3  3A:DA:00:F9:0C:02        iPhone XS Max 🦊🐱🦊   0.150 mins          5
+    4  02:BC:15:7E:D5:DC                  MT_FREE   0.033 mins          1
+    5  00:3E:1A:5D:14:45                  MT_FREE   0.033 mins          1
+    6  76:C5:A0:70:08:96                            0.033 mins          1
+    7  D2:25:91:F6:6C:D8                     Саня   0.217 mins          5
+    8  BE:F1:71:D6:10:D7             C322U21 0566 157.683 mins       1647
+    9  00:03:7A:1A:03:56                  MT_FREE   0.100 mins          1
+    10 38:1A:52:0D:84:D7 EBFCD57F-EE81fI_DL_1AO2T  71.983 mins        704
+              BPM
+    1  0.019 mins
+    2  0.021 mins
+    3  0.030 mins
+    4  0.033 mins
+    5  0.033 mins
+    6  0.033 mins
+    7  0.043 mins
+    8  0.096 mins
+    9  0.100 mins
+    10 0.102 mins
 
 -   Данные клиентов
 
@@ -582,12 +395,13 @@ stability_summary <- queries %>%
     .groups = 'drop'
   ) %>%
   filter(!is.na(Mean_Power)) %>%
-  arrange(Mean_Power)
+  arrange(Mean_Power) %>%
+  head(10)
 
 stability_summary
 ```
 
-    # A tibble: 12,062 × 3
+    # A tibble: 10 × 3
        Station.MAC       Probed.ESSIDs     Mean_Power
        <chr>             <chr>                  <dbl>
      1 8A:45:77:F9:7F:F4 "iPhone (Дима )"         -89
@@ -600,7 +414,6 @@ stability_summary
      8 50:8F:4C:71:25:96 ""                       -87
      9 92:5B:0A:A2:D6:1B ""                       -87
     10 AA:59:C8:6F:F3:2C ""                       -87
-    # ℹ 12,052 more rows
 
 ``` r
 indexMin <- which.min(queries$Power)
