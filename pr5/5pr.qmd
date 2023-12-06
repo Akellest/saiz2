@@ -85,7 +85,8 @@ queries %>% glimpse()
 ```{r}
 vulnerateP <- wireP %>%
   filter(Privacy == "OPN") %>%
-  distinct(BSSID, ESSID)
+  distinct(BSSID, ESSID) %>%
+  head(10)
 vulnerateP
 ```
 
@@ -145,7 +146,9 @@ BPM <- wireP %>%
   select(BSSID, ESSID, session, X..beacons) %>%
   filter(session != 0, X..beacons != 0) %>%
   mutate(BPM = round(session / X..beacons, 3)) %>%
-  arrange(BPM)
+  mutate(session = round(session, 3)) %>%
+  arrange(BPM) %>%
+  head(10)
 
 BPM
 ```
@@ -205,7 +208,8 @@ stability_summary <- queries %>%
     .groups = 'drop'
   ) %>%
   filter(!is.na(Mean_Power)) %>%
-  arrange(Mean_Power)
+  arrange(Mean_Power) %>%
+  head(10)
 
 stability_summary
 
