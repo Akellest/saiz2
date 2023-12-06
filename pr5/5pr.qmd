@@ -24,8 +24,66 @@ editor_options:
 Устанавливаем пакеты *dplyr* для последующей работы
 ```{r}
 library(dplyr)
+library(stringr)
 ```
- 
+
+Загрузка и прочтение файла
+```{r}
+data1 <- read.csv("mir.csv-01.csv")
+wireP <- data1[1:169, ]
+data2 <- read.csv("mir.csv-01.csv", skip = 169)
+queries <- data2[1:nrow(df), ]
+```
+
+Удаление лишних пробелов из всех ячеек
+```{r}
+wireP <- wireP %>%
+  mutate_all(~str_squish(.))
+
+queries <- queries %>%
+  mutate_all(~str_squish(.))
+```
+
+
+Изменение формата столбцов
+```{r}
+to_convertDate <- c('First.time.seen', 'Last.time.seen')
+to_convertInt <- c('channel', 'Speed', 'Power', 'X..beacons', 'X..IV', 'ID.length')
+
+wireP <- wireP %>%
+  mutate_at(to_convertDate, funs(as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
+wireP <- wireP %>%
+  mutate_at(to_convertInt, as.integer)
+
+
+to_convertDate1 <- c('First.time.seen', 'Last.time.seen')
+to_convertInt1 <- c('Power', 'X..packets')
+
+queries <- queries %>%
+  mutate_at(to_convertDate1, funs(as.POSIXct(., format = "%Y-%m-%d %H:%M:%S")))
+queries <- queries %>%
+  mutate_at(to_convertInt1, as.integer)
+```
+
+Просмотр получившихся таблиц
+```{r}
+wireP %>% glimpse()
+queries %>% glimpse()
+```
+
+
+
+
+
+
+
+
+
+```{r}
+
+```
+
+
 
 ## Оценка результата
 
