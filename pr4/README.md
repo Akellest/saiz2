@@ -1,5 +1,4 @@
-Лабораторная работа №4. Исследование метаданных DNS трафика
-================
+# Лабораторная работа №4. Исследование метаданных DNS трафика
 
 ## Цель работы
 
@@ -23,46 +22,25 @@
 library(dplyr)
 ```
 
-    Warning: пакет 'dplyr' был собран под R версии 4.3.2
 
+    Attaching package: 'dplyr'
 
-    Присоединяю пакет: 'dplyr'
-
-    Следующие объекты скрыты от 'package:stats':
+    The following objects are masked from 'package:stats':
 
         filter, lag
 
-    Следующие объекты скрыты от 'package:base':
+    The following objects are masked from 'package:base':
 
         intersect, setdiff, setequal, union
 
 ``` r
 library(tidyr)
-```
-
-    Warning: пакет 'tidyr' был собран под R версии 4.3.2
-
-``` r
 library(tidyverse)
 ```
 
-    Warning: пакет 'tidyverse' был собран под R версии 4.3.2
-
-    Warning: пакет 'ggplot2' был собран под R версии 4.3.2
-
-    Warning: пакет 'tibble' был собран под R версии 4.3.2
-
-    Warning: пакет 'readr' был собран под R версии 4.3.2
-
-    Warning: пакет 'purrr' был собран под R версии 4.3.2
-
-    Warning: пакет 'forcats' был собран под R версии 4.3.2
-
-    Warning: пакет 'lubridate' был собран под R версии 4.3.2
-
     ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
     ✔ forcats   1.0.0     ✔ readr     2.1.4
-    ✔ ggplot2   3.4.4     ✔ stringr   1.5.0
+    ✔ ggplot2   3.4.4     ✔ stringr   1.5.1
     ✔ lubridate 1.9.3     ✔ tibble    3.2.1
     ✔ purrr     1.0.2     
 
@@ -75,12 +53,10 @@ library(tidyverse)
 library(httr)
 ```
 
-    Warning: пакет 'httr' был собран под R версии 4.3.2
-
 Встраиваем названия столбцов из header.csv в dng.log
 
 ``` r
-data <- read.csv("https://github.com/Akellest/saiz2/releases/download/my/dns.log", sep="\t", header=FALSE)
+data <- read.csv("dns.log", sep="\t", header=FALSE)
 header <- read.csv("header.csv")
 colnames(data) <- header[,1]
 ```
@@ -272,17 +248,17 @@ location_df
     8                                              44.206.168.192.in-addr.arpa
     9                                                                 HPE8AA67
     10                                                                  ISATAP
-       country      city                                        org
-    1     <NA>      <NA>                                       <NA>
-    2       FI    Hamina                         AS15169 Google LLC
-    3       SE Stockholm          AS16625 Akamai Technologies, Inc.
-    4       SE     Kista                          AS6185 Apple Inc.
-    5       FI    Hamina                         AS15169 Google LLC
-    6       RU    Moscow AS25513 PJSC Moscow city telephone network
-    7     <NA>      <NA>                                       <NA>
-    8     <NA>      <NA>                                       <NA>
-    9     <NA>      <NA>                                       <NA>
-    10    <NA>      <NA>                                       <NA>
+       country      city                               org
+    1     <NA>      <NA>                              <NA>
+    2       FI    Hamina                AS15169 Google LLC
+    3       SE Stockholm AS16625 Akamai Technologies, Inc.
+    4       SE     Kista                 AS6185 Apple Inc.
+    5       FI    Hamina                AS15169 Google LLC
+    6       US   Ashburn          AS14618 Amazon.com, Inc.
+    7     <NA>      <NA>                              <NA>
+    8     <NA>      <NA>                              <NA>
+    9     <NA>      <NA>                              <NA>
+    10    <NA>      <NA>                              <NA>
 
 ## Оценка результата
 
