@@ -30,7 +30,7 @@ library(httr)
  
 Встраиваем названия столбцов из header.csv в dng.log
 ```{r}
-data <- read.csv("dns.log", sep="\t", header=FALSE)
+data <- read.csv("https://github.com/Akellest/saiz2/releases/download/my/dns.log", sep="\t", header=FALSE)
 header <- read.csv("header.csv")
 colnames(data) <- header[,1]
 ```
