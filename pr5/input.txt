@@ -1,0 +1,10 @@
+00:03:7F Atheros Communications, Inc.
+00:0D:97 Hitachi Energy USA Inc.
+00:23:EB Cisco Systems, Inc
+00:25:00 Apple, Inc.
+00:26:99 Cisco Systems, Inc
+08:3A:2F Guangzhou Juan Intelligent Tech Joint Stock Co.,Ltd
+0C:80:63 Tp-Link Technologies Co.,Ltd.
+DC:09:4C Huawei Technologies Co.,Ltd
+E0:D9:E3 Eltex Enterprise Ltd.
+E8:28:C1 Eltex Enterprise Ltd.

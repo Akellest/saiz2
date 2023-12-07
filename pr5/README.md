@@ -1,6 +1,5 @@
-Лабораторная работа №5. Исследование информации о состоянии беспроводных
-сетей
-================
+# Лабораторная работа №5. Исследование информации о состоянии
+беспроводных сетей
 
 ## Цель работы
 
@@ -26,16 +25,14 @@
 library(dplyr)
 ```
 
-    Warning: пакет 'dplyr' был собран под R версии 4.3.2
 
+    Attaching package: 'dplyr'
 
-    Присоединяю пакет: 'dplyr'
-
-    Следующие объекты скрыты от 'package:stats':
+    The following objects are masked from 'package:stats':
 
         filter, lag
 
-    Следующие объекты скрыты от 'package:base':
+    The following objects are masked from 'package:base':
 
         intersect, setdiff, setequal, union
 
@@ -44,20 +41,16 @@ library(stringr)
 library(lubridate)
 ```
 
-    Warning: пакет 'lubridate' был собран под R версии 4.3.2
 
+    Attaching package: 'lubridate'
 
-    Присоединяю пакет: 'lubridate'
-
-    Следующие объекты скрыты от 'package:base':
+    The following objects are masked from 'package:base':
 
         date, intersect, setdiff, union
 
 ``` r
 library(tidyr)
 ```
-
-    Warning: пакет 'tidyr' был собран под R версии 4.3.2
 
 Загрузка и прочтение файла
 
@@ -95,7 +88,7 @@ wireP <- wireP %>%
     The first warning was:
     ℹ In argument: `channel = .Primitive("as.integer")(channel)`.
     Caused by warning:
-    ! в результате преобразования созданы NA
+    ! NAs introduced by coercion
     ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
 
 ``` r
@@ -112,7 +105,7 @@ queries <- queries %>%
     The first warning was:
     ℹ In argument: `Power = .Primitive("as.integer")(Power)`.
     Caused by warning:
-    ! в результате преобразования созданы NA
+    ! NAs introduced by coercion
     ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.
 
 Просмотр получившихся таблиц
@@ -202,15 +195,15 @@ WPA3 <- wireP %>%
 WPA3
 ```
 
-                  BSSID              ESSID
-    1 26:20:53:0C:98:E8                   
-    2 A2:FE:FF:B8:9B:C9         Christie’s
-    3 96:FF:FC:91:EF:64                   
-    4 CE:48:E7:86:4E:33 iPhone (Анастасия)
-    5 8E:1F:94:96:DA:FD iPhone (Анастасия)
-    6 BE:FD:EF:18:92:44            Димасик
-    7 3A:DA:00:F9:0C:02  iPhone XS Max 🦊🐱🦊
-    8 76:C5:A0:70:08:96                   
+                  BSSID                ESSID
+    1 26:20:53:0C:98:E8                     
+    2 A2:FE:FF:B8:9B:C9           Christie’s
+    3 96:FF:FC:91:EF:64                     
+    4 CE:48:E7:86:4E:33   iPhone (Анастасия)
+    5 8E:1F:94:96:DA:FD   iPhone (Анастасия)
+    6 BE:FD:EF:18:92:44              Димасик
+    7 3A:DA:00:F9:0C:02 iPhone XS Max 🦊🐱🦊
+    8 76:C5:A0:70:08:96                     
 
 Вычисление длительности сессий каждого пользователя
 
@@ -276,7 +269,7 @@ BPM
                    BSSID                    ESSID      session X..beacons
     1  F2:30:AB:E9:03:ED          iPhone (Uliana)   0.117 mins          6
     2  B2:CF:C0:00:4A:60      Михаил's Galaxy M32   0.083 mins          4
-    3  3A:DA:00:F9:0C:02        iPhone XS Max 🦊🐱🦊   0.150 mins          5
+    3  3A:DA:00:F9:0C:02     iPhone XS Max 🦊🐱🦊   0.150 mins          5
     4  02:BC:15:7E:D5:DC                  MT_FREE   0.033 mins          1
     5  00:3E:1A:5D:14:45                  MT_FREE   0.033 mins          1
     6  76:C5:A0:70:08:96                            0.033 mins          1
