@@ -11,10 +11,8 @@ editor_options:
 
 1. Закрепить навыки исследования данных журнала Windows Active Directory
 2. Изучить структуру журнала системы Windows Active Directory
-3. Зекрепить практические навыки использования языка программирования R для
-обработки данных
-4. Закрепить знания основных функций обработки данных экосистемы tidyverse
-языка R
+3. Зекрепить практические навыки использования языка программирования R для обработки данных
+4. Закрепить знания основных функций обработки данных экосистемы tidyverse языка R
 
 ## Исходные данные
 
@@ -31,6 +29,7 @@ library(stringr)
 library(lubridate)
 library(tidyr)
 library(jsonlite)
+library(purrr)
 ```
 
 Загрузка и прочтение файла
@@ -38,12 +37,46 @@ library(jsonlite)
 url = "https://storage.yandexcloud.net/iamcth-data/dataset.tar.gz"
 download.file(url, "dataset.tar.gz", mode="wb")
 untar("dataset.tar.gz")
-#data <- jsonlite::stream_in(file("caldera_attack_evals_round1_day1_2019-10-20201108.json"))
+data_raw <- jsonlite::stream_in(file("caldera_attack_evals_round1_day1_2019-10-20201108.json"))
 ```
 
 
+Импорт справочника кодов журнала Windows
 ```{r}
+library(xml2)
+library(rvest)
+webpage_url <- "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor"
+webpage <- xml2::read_html(webpage_url)
+event_df <- rvest::html_table(webpage)[[1]]
+```
 
+Раскрытие внутренних датафреймов, удаление колонок с
+единственным значением параметра
+```{r}
+data <- data_raw %>% unnest(c("@metadata", event, log, winlog, ecs, host, agent), names_sep = "")
+data1 <- data %>% unnest(c(winloguser_data, winloguser, winlogprocess, winlogevent_data), names_sep = "")
+data2 <- data1 %>%
+  select(where(~length(unique(.)) > 1))
+df <- data2 %>%
+  select(where(~all(!is.na(.))))
+df %>% glimpse()
+```
+Количество хостов
+```{r}
+uniqList <- df %>%
+  select(winlogcomputer_name) %>%
+  unique
+uniqList
+```
+```{r}
+df_subset <- df[, 3]
+merged <- merge(df_subset, event_df, by.x = "eventcode", by.y = "Current Windows Event ID", all.x = TRUE)
+
+```
+
+```{r}
+result <- table(merged$'Potential Criticality')
+result
 ```
 
 
@@ -53,4 +86,4 @@ untar("dataset.tar.gz")
 
 ## Вывод
 
-Были развиты практические навыки использования языка программирования R для обработки данных
+Были проанализированы данные вредоносной активности в домене Windows
